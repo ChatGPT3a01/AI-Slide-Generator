@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 在教育上的應用 - 亮亮文創</title>
+    <style>
+        /* 全局設置與變數 */
+        :root {
+            --main-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --accent-color: #60a5fa;
+            --background-color: #eff6ff;
+            --text-dark: #1f2937;
+            --text-light: #f9fafb;
+            --card-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            --border-radius-lg: 16px;
+            --border-radius-md: 12px;
+            --font-primary: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+            --transition-speed: 0.8s;
+            --transition-ease: ease-in-out;
+        }
+
+        /* 基礎樣式重置 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            color: var(--text-dark);
+            background-color: var(--background-color);
+            overflow: hidden; /* 防止滾動 */
+            line-height: 1.6;
+        }
+
+        /* 簡報容器 */
+        #presentation-container {
+            display: flex;
+            width: 800vw; /* 8頁 * 100vw */
+            height: 100vh;
+            transition: transform var(--transition-speed) var(--transition-ease);
+        }
+
+        /* 單頁投影片樣式 */
+        .slide {
+            flex: 0 0 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+            box-sizing: border-box;
+            position: relative;
+            background-color: var(--background-color);
+            overflow: hidden; /* 防止內容溢出視覺元素 */
+        }
+
+        /* 頁面內容容器 - 用於淡入淡出動畫 */
+        .slide-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            max-width: 1000px; /* 限制內容寬度 */
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide-content.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 標題樣式 */
+        h1 {
+            font-size: 64px;
+            color: var(--main-color);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: 48px;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+
+        h3 {
+            font-size: 32px;
+            color: var(--main-color);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        p {
+            font-size: 22px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        ul li {
+            font-size: 24px;
+            line-height: 2;
+            margin-bottom: 10px;
+            padding-left: 35px;
+            position: relative;
+            color: var(--text-dark);
+        }
+
+        ul li::before {
+            content: '👉'; /* 或其他圖標 */
+            position: absolute;
+            left: 0;
+            color: var(--main-color);
+            font-size: 28px;
+            top: 0;
+        }
+
+        /* 卡片與容器樣式 */
+        .card {
+            background-color: var(--text-light);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin: 20px 0;
+            text-align: left;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .card p {
+            font-size: 20px;
+            line-height: 1.7;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 30px;
+        }
+
+        .grid-item {
+            background-color: var(--text-light);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .grid-item h3 {
+            font-size: 28px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .grid-item p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .grid-item .icon {
+            font-size: 60px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .grid-item:hover .icon {
+            transform: translateY(-5px) scale(1.05);
+        }
+
+        /* 封面頁特定樣式 */
+        #slide-1 {
+            background: linear-gradient(135deg, var(--main-color), var(--secondary-color));
+            color: var(--text-light);
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #slide-1 h1 {
+            color: var(--text-light);
+            font-size: 72px;
+            margin-bottom: 15px;
+        }
+
+        #slide-1 .subtitle {
+            font-size: 36px;
+            color: var(--text-light);
+            opacity: 0.9;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        #slide-1 .author-info {
+            font-size: 28px;
+            margin-top: 30px;
+            color: var(--text-light);
+            opacity: 0.8;
+        }
+
+        /* 視覺元素 (CSS 繪製) */
+        .visual-element {
+            position: absolute;
+            opacity: 0.2;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+            z-index: 1;
+        }
+
+        #slide-1 .visual-element:nth-child(1) {
+            width: 300px; height: 300px; top: -50px; left: -50px;
+        }
+        #slide-1 .visual-element:nth-child(2) {
+            width: 400px; height: 400px; bottom: -100px; right: -100px;
+            background: radial-gradient(circle, var(--text-light) 0%, transparent 70%);
+        }
+        #slide-1 .visual-element:nth-child(3) {
+            width: 200px; height: 200px; top: 20%; right: 10%;
+            background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+        }
+
+        .slide::before, .slide::after {
+            content: '';
+            position: absolute;
+            background-color: var(--accent-color);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        /* 一般頁面的抽象幾何背景 */
+        .slide:not(#slide-1):not(#slide-8)::before {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            top: 20px;
+            left: 20px;
+            transform: rotate(45deg);
+        }
+        .slide:not(#slide-1):not(#slide-8)::after {
+            width: 200px;
+            height: 80px;
+            border-radius: var(--border-radius-lg);
+            bottom: 30px;
+            right: 30px;
+            transform: skew(-20deg);
+            background-color: var(--secondary-color);
+            opacity: 0.15;
+        }
+
+        /* 目錄頁特定 */
+        #slide-2 .slide-content {
+            max-width: 1200px;
+        }
+        #slide-2 .outline-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--text-light);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--card-shadow);
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        #slide-2 .outline-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+        #slide-2 .outline-item .icon {
+            font-size: 40px;
+            color: var(--main-color);
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        #slide-2 .outline-item p {
+            font-size: 26px;
+            margin: 0;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* 結尾頁特定樣式 */
+        #slide-8 h1 {
+            color: var(--main-color);
+            font-size: 68px;
+        }
+        #slide-8 h2 {
+            font-size: 40px;
+            color: var(--secondary-color);
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+        #slide-8 .contact-info {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            color: var(--text-dark);
+        }
+        #slide-8 .contact-info .icon {
+            font-size: 32px;
+            color: var(--main-color);
+            margin-right: 15px;
+        }
+        #slide-8 .call-to-action {
+            margin-top: 40px;
+            font-size: 26px;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        /* 導航按鈕 */
+        #nav-buttons {
+            position: fixed;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none; /* 讓點擊穿透到頁面內容，只有按鈕區域可點擊 */
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background-color: rgba(0,0,0,0.2);
+            color: var(--text-light);
+            border: none;
+            padding: 15px 20px;
+            font-size: 30px;
+            cursor: pointer;
+            border-radius: var(--border-radius-md);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            transform: translateY(-50%);
+            pointer-events: auto; /* 恢復按鈕的點擊事件 */
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(0,0,0,0.4);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        #prev-btn {
+            margin-left: 20px;
+        }
+
+        #next-btn {
+            margin-right: 20px;
+        }
+
+        /* 頁碼指示器 */
+        #pagination {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .dot.active {
+            background-color: var(--main-color);
+            border-color: var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        .dot:hover {
+            background-color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        /* 進度條 */
+        #progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-color);
+            transition: width var(--transition-speed) var(--transition-ease);
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            h1 { font-size: 52px; }
+            h2 { font-size: 38px; }
+            h3 { font-size: 28px; }
+            p { font-size: 18px; }
+            ul li { font-size: 20px; padding-left: 30px; }
+            ul li::before { font-size: 24px; }
+            .slide { padding: 30px; }
+            .content-grid { grid-template-columns: 1fr; }
+            .nav-btn { font-size: 24px; padding: 10px 15px; }
+            #slide-1 h1 { font-size: 60px; }
+            #slide-1 .subtitle { font-size: 28px; }
+            #slide-1 .author-info { font-size: 24px; }
+            #slide-2 .outline-item p { font-size: 22px; }
+            #slide-8 h1 { font-size: 52px; }
+            #slide-8 h2 { font-size: 32px; }
+            #slide-8 .contact-info { font-size: 20px; }
+            #slide-8 .call-to-action { font-size: 22px; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 40px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 24px; }
+            p { font-size: 16px; }
+            ul li { font-size: 18px; }
+            .slide { padding: 20px; }
+            .nav-btn { display: none; } /* 手機上隱藏左右箭頭，鼓勵滑動或頁碼點擊 */
+            #pagination { bottom: 10px; }
+            .dot { width: 10px; height: 10px; }
+            #slide-1 h1 { font-size: 48px; }
+            #slide-1 .subtitle { font-size: 22px; }
+            #slide-1 .author-info { font-size: 20px; }
+            #slide-2 .outline-item p { font-size: 18px; }
+            #slide-8 h1 { font-size: 40px; }
+            #slide-8 h2 { font-size: 28px; }
+            #slide-8 .contact-info { font-size: 18px; }
+            #slide-8 .call-to-action { font-size: 20px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="presentation-container">
+        <!-- 第 1 頁：封面 -->
+        <div class="slide" id="slide-1">
+            <div class="visual-element"></div>
+            <div class="visual-element"></div>
+            <div class="visual-element"></div>
+            <div class="slide-content">
+                <h1>AI 在教育上的應用</h1>
+                <p class="subtitle">開啟智慧教學新篇章，共創高效學習體驗</p>
+                <div class="author-info">
+                    <p>主講人：亮亮老師</p>
+                    <p>組織：亮亮文創公司</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第 2 頁：目錄/大綱 -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <h2>簡報大綱</h2>
+                <div class="content-grid">
+                    <div class="outline-item">
+                        <span class="icon">🤖</span>
+                        <p>AI 於教育的角色：智慧教學的轉型</p>
+                    </div>
+                    <div class="outline-item">
+                        <span class="icon">🧑‍🎓</span>
+                        <p>智慧助教：實現個性化學習</p>
+                    </div>
+                    <div class="outline-item">
+                        <span class="icon">⏱️</span>
+                        <p>提升效率：行政與評量</p>
+                    </div>
+                    <div class="outline-item">
+                        <span class="icon">💡</span>
+                        <p>創新教學：豐富課堂互動與創造力</p>
+                    </div>
+                    <div class="outline-item">
+                        <span class="icon">⚖️</span>
+                        <p>倫理與挑戰：確保公正與負責</p>
+                    </div>
+                    <div class="outline-item">
+                        <span class="icon">🚀</span>
+                        <p>未來展望：人機協作共創教育新局</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第 3 頁：內容頁 - AI平台 -->
+        <div class="slide" id="slide-3">
+            <div class="slide-content">
+                <h2>AI 於教育的角色：智慧教學的轉型</h2>
+                <div class="card">
+                    <p>AI 不再只是科幻，它已成為強大的輔助工具，正逐步融入教育現場，協助老師提升教學品質與效率。</p>
+                    <h3>主要應用領域：</h3>
+                    <ul>
+                        <li><span class="icon">🧠</span> <strong>數據分析與洞察：</strong> 透過分析學生學習數據，提供個人化學習建議與預警。</li>
+                        <li><span class="icon">🛠️</span> <strong>自動化工具：</strong> 自動批改作業、生成測驗、排課等，減輕教師行政負擔。</li>
+                        <li><span class="icon">🤝</span> <strong>智慧輔助：</strong> 作為教師的得力助手，而非取代者，讓老師能更專注於學生互動與啟發。</li>
+                    </ul>
+                </div>
+                <!-- 適合搭配的視覺元素：AI 晶片、大腦與齒輪的抽象連結圖示 -->
+            </div>
+        </div>
+
+        <!-- 第 4 頁：內容頁 - 教育應用 (個性化學習) -->
+        <div class="slide" id="slide-4">
+            <div class="slide-content">
+                <h2>智慧助教：實現個性化學習</h2>
+                <div class="content-grid">
+                    <div class="grid-item">
+                        <span class="icon">✍️</span>
+                        <h3>智慧批改與回饋</h3>
+                        <p>自動批改選擇題、簡答題，提供即時、詳細的個性化回饋，減少老師時間壓力。</p>
+                    </div>
+                    <div class="grid-item">
+                        <span class="icon">🗺️</span>
+                        <h3>學習路徑規劃</h3>
+                        <p>根據學生能力、學習風格與進度，推薦最適合的學習資源與路徑，實現因材施教。</p>
+                    </div>
+                    <div class="grid-item">
+                        <span class="icon">💬</span>
+                        <h3>即時答疑與輔導</h3>
+                        <p>AI 聊天機器人提供 24/7 學習支援，解答學生疑問，為學生提供額外學習輔導。</p>
+                    </div>
+                    <div class="grid-item">
+                        <span class="icon">📊</span>
+                        <h3>學習進度分析</h3>
+                        <p>即時追蹤學生學習數據，生成直觀報告，協助老師掌握班級及個人學習狀況。</p>
+                    </div>
+                </div>
+                <!-- 適合搭配的視覺元素：學生學習曲線圖、機器人輔導學生、學習資源推薦圖示 -->
+            </div>
+        </div>
+
+        <!-- 第 5 頁：內容頁 - 工作範圍 (提升效率) -->
+        <div class="slide" id="slide-5">
+            <div class="slide-content">
+                <h2>提升行政與評量效率：解放教師時間</h2>
+                <div class="card">
+                    <p>AI 在行政管理和評量方面能大幅度自動化重複性工作，讓老師有更多精力投入教學核心。</p>
+                    <div class="content-grid">
+                        <div class="grid-item" style="box-shadow: none; background-color: var(--background-color);">
+                            <span class="icon">✅</span>
+                            <h3>自動化評量</h3>
+                            <p>智能批改多種類型的作業與考卷，快速生成成績分析報告，識別學習盲點。</p>
+                        </div>
+                        <div class="grid-item" style="box-shadow: none; background-color: var(--background-color);">
+                            <span class="icon">📝</span>
+                            <h3>試卷生成</h3>
+                            <p>根據課程內容和難度要求，自動生成多樣化的測驗題目，節省命題時間。</p>
+                        </div>
+                        <div class="grid-item" style="box-shadow: none; background-color: var(--background-color);">
+                            <span class="icon">🗓️</span>
+                            <h3>智慧排課與管理</h3>
+                            <p>優化課程安排、教室分配，並自動化學生考勤記錄，提升學校營運效率。</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 適合搭配的視覺元素：時鐘加速、文件堆疊減少、數據圖表 -->
+            </div>
+        </div>
+
+        <!-- 第 6 頁：內容頁 - 創新教學 (互動與創造) -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <h2>創新教學：豐富課堂互動與創造力</h2>
+                <div class="card">
+                    <p>AI 不僅提升效率，更能為課堂帶來前所未有的互動體驗和創意火花，激發學生學習興趣。</p>
+                    <ul>
+                        <li><span class="icon">🎨</span> <strong>AI 輔助教案生成：</strong> 根據課程主題、年級、目標，快速生成創意教案、活動點子。</li>
+                        <li><span class="icon">🌐</span> <strong>虛擬實境/擴增實境 (VR/AR)：</strong> 透過 AI 驅動的沉浸式體驗，讓學生「身歷其境」學習。</li>
+                        <li><span class="icon">✍️</span> <strong>創意寫作與藝術輔助：</strong> 提供寫作靈感、詞彙建議，甚至協助生成藝術作品，激發創造潛能。</li>
+                        <li><span class="icon">🧪</span> <strong>互動式模擬實驗：</strong> 讓學生在安全、可控的虛擬環境中進行實驗，提升實作能力。</li>
+                    </ul>
+                </div>
+                <!-- 適合搭配的視覺元素：腦袋與燈泡、VR 頭盔、數位畫板、實驗室燒杯圖示 -->
+            </div>
+        </div>
+
+        <!-- 第 7 頁：內容頁 - 倫理與挑戰/未來展望 -->
+        <div class="slide" id="slide-7">
+            <div class="slide-content">
+                <h2>AI 教育的倫理與挑戰：確保公正與負責</h2>
+                <div class="card">
+                    <ul>
+                        <li><span class="icon">🔒</span> <strong>數據隱私與安全：</strong> 學生個人數據的收集、使用與保護是首要考量。</li>
+                        <li><span class="icon"> biases</span> <strong>演算法偏見：</strong> 確保 AI 不會因訓練數據產生偏見，影響學習公平性。</li>
+                        <li><span class="icon">🌉</span> <strong>數位落差：</strong> 資源不均可能加劇數位鴻溝，需確保所有學生都能公平受益。</li>
+                        <li><span class="icon">📚</span> <strong>教師專業發展：</strong> 老師需學習如何有效運用 AI 工具，並適應新教學模式。</li>
+                    </ul>
+                </div>
+                <h3>未來展望：人機協作共創教育新局</h3>
+                <p>AI 將持續進化，與教師形成更緊密的合作夥伴關係，共同塑造更智慧、更個性化、更具啟發性的教育未來。</p>
+                <!-- 適合搭配的視覺元素：天秤圖示（公正）、盾牌圖示（安全）、手牽手（協作） -->
+            </div>
+        </div>
+
+        <!-- 第 8 頁：結尾頁 -->
+        <div class="slide" id="slide-8">
+            <div class="slide-content">
+                <h1>感謝您的參與！</h1>
+                <h2>期待與您共創智慧教育的未來</h2>
+                <div class="contact-info">
+                    <span class="icon">📧</span> <p>Email: info@liangliang.com</p>
+                </div>
+                <div class="contact-info">
+                    <span class="icon">🌐</span> <p>Website: www.liangliang.com</p>
+                </div>
+                <p class="call-to-action">掃描QR code了解更多AI教育解決方案</p>
+                <!-- 適合搭配的視覺元素：一個示意性的QR Code圖片（CSS繪製或簡單文字提示） -->
+                <div style="width: 150px; height: 150px; background-color: var(--accent-color); border-radius: var(--border-radius-md); margin-top: 20px; display: flex; justify-content: center; align-items: center; color: var(--text-light); font-weight: bold;">
+                    QR Code
+                </div>
+                <p class="author-info" style="margin-top: 30px; font-size: 20px;">亮亮老師 &copy; 亮亮文創公司</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 導航按鈕 -->
+    <div id="nav-buttons">
+        <button id="prev-btn" class="nav-btn" aria-label="上一頁">&#10094;</button>
+        <button id="next-btn" class="nav-btn" aria-label="下一頁">&#10095;</button>
+    </div>
+
+    <!-- 頁碼指示器 -->
+    <div id="pagination"></div>
+
+    <!-- 進度條 -->
+    <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <script>
+        const presentationContainer = document.getElementById('presentation-container');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const pagination = document.getElementById('pagination');
+        const progressBar = document.getElementById('progress-bar');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+
+        // 初始化頁碼指示器
+        function createPaginationDots() {
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                dot.setAttribute('data-index', i);
+                dot.setAttribute('aria-label', `跳轉到第 ${i + 1} 頁`);
+                dot.tabIndex = 0; // 使點點可聚焦
+                dot.addEventListener('click', () => goToSlide(i));
+                pagination.appendChild(dot);
+            }
+        }
+
+        // 更新進度條
+        function updateProgressBar() {
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // 頁面跳轉邏輯
+        function goToSlide(index) {
+            if (index < 0 || index >= totalSlides) return;
+
+            // 移除舊頁面的 active 內容動畫
+            const currentSlideContent = slides[currentSlide].querySelector('.slide-content');
+            if (currentSlideContent) {
+                currentSlideContent.classList.remove('active');
+            }
+
+            currentSlide = index;
+            presentationContainer.style.transform = `translateX(-${currentSlide * 100}vw)`;
+
+            // 更新頁碼指示器
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, i) => {
+                if (i === currentSlide) {
+                    dot.classList.add('active');
+                    dot.setAttribute('aria-current', 'page');
+                } else {
+                    dot.classList.remove('active');
+                    dot.removeAttribute('aria-current');
+                }
+            });
+
+            updateProgressBar();
+
+            // 淡入新頁面的內容
+            const newSlideContent = slides[currentSlide].querySelector('.slide-content');
+            if (newSlideContent) {
+                // 等待 transform 完成後再淡入，增加視覺流暢度
+                // 由於 transition 是並行的，實際延遲可能需要調整
+                setTimeout(() => {
+                    newSlideContent.classList.add('active');
+                }, 100); // 稍微延遲以確保 transform 開始
+            }
+        }
+
+        // 上一頁
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        // 下一頁
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        // 事件監聽器
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+            }
+        });
+
+        // 初始化
+        createPaginationDots();
+        goToSlide(0); // 預設顯示第一頁
+
+        // 確保第一頁內容一開始就是 active
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstSlideContent = slides[0].querySelector('.slide-content');
+            if (firstSlideContent) {
+                firstSlideContent.classList.add('active');
+            }
+        });
+
+    </script>
+</body>
+</html>

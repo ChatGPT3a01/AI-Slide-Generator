@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI在教育上的應用 - 亮亮老師</title>
+    <style>
+        /* 全局設置 */
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-blue: #3b82f6;
+            --light-blue: #60a5fa;
+            --text-dark: #1f2937; /* 深灰藍 */
+            --text-light: #ffffff;
+            --bg-light: #f9fafb; /* 淺灰白 */
+            --bg-gradient-start: #e0f2fe; /* 更淺的藍色，作為漸層背景起點 */
+            --bg-gradient-end: #bfdbfe;   /* 較淺的藍色，作為漸層背景終點 */
+            --font-family-sans: "Helvetica Neue", "Helvetica", "Arial", "sans-serif", "Microsoft JhengHei", "PingFang TC";
+            --max-width: 1200px;
+            --slide-padding: 3rem 5rem;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 簡報容器 */
+        #presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-light);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 單頁簡報樣式 */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row; /* Default for content + image */
+            justify-content: center;
+            align-items: center;
+            padding: var(--slide-padding);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out, visibility 0.8s ease-out;
+            background-color: var(--bg-light);
+            overflow: auto; /* Allow content to scroll if it overflows */
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* 封面頁特殊樣式 */
+        #slide-1 {
+            flex-direction: column;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: var(--text-light);
+        }
+
+        #slide-1 h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-weight: 700;
+        }
+
+        #slide-1 h2 {
+            font-size: 2.2rem;
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        #slide-1 p {
+            font-size: 1.5rem;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+
+        /* 結尾頁特殊樣式 */
+        #slide-8 {
+            flex-direction: column;
+            text-align: center;
+            background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
+            color: var(--text-light);
+        }
+
+        #slide-8 h2 {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        #slide-8 p {
+            font-size: 1.8rem;
+            margin-top: 1rem;
+            opacity: 0.9;
+        }
+
+        /* 內容區塊 */
+        .slide-content {
+            flex: 2; /* Content takes more space */
+            max-width: 70%;
+            padding-right: 3rem;
+        }
+
+        /* 圖片佔位符 */
+        .slide-image-placeholder {
+            flex: 1; /* Image takes less space */
+            min-height: 200px;
+            height: 100%;
+            background: linear-gradient(45deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 標題 */
+        h1, h2, h3 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 1.8rem;
+        }
+
+        h3 {
+            font-size: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-blue);
+        }
+
+        p {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        ul li {
+            position: relative;
+            margin-bottom: 0.8rem;
+            padding-left: 2rem;
+        }
+
+        ul li::before {
+            content: '•'; /* Bullet point */
+            position: absolute;
+            left: 0;
+            color: var(--primary-blue);
+            font-weight: bold;
+            font-size: 1.5rem;
+            line-height: 1; /* Align with text */
+        }
+
+        /* 頁碼指示器 */
+        #pagination {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 1.2rem;
+            color: var(--primary-blue);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 1200px) {
+            #slide-1 h1 { font-size: 3.8rem; }
+            #slide-1 h2 { font-size: 1.8rem; }
+            #slide-1 p { font-size: 1.3rem; }
+            #slide-8 h2 { font-size: 3.5rem; }
+            #slide-8 p { font-size: 1.6rem; }
+            h2 { font-size: 2.4rem; }
+            h3 { font-size: 1.8rem; }
+            p, ul, ul li { font-size: 1.2rem; }
+            .slide { padding: 2.5rem 4rem; }
+            .slide-content { max-width: 65%; padding-right: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                flex-direction: column; /* Stack content and image vertically */
+                padding: 2rem;
+                overflow-y: auto; /* Allow scrolling on smaller screens */
+            }
+
+            .slide-content {
+                max-width: 100%;
+                padding-right: 0;
+                margin-bottom: 2rem;
+            }
+
+            .slide-image-placeholder {
+                width: 90%; /* Adjust width for stacked layout */
+                flex: none; /* Remove flex sizing */
+                max-height: 250px; /* Limit height */
+            }
+
+            #slide-1 h1 { font-size: 3rem; }
+            #slide-1 h2 { font-size: 1.5rem; }
+            #slide-1 p { font-size: 1.1rem; }
+            #slide-8 h2 { font-size: 3rem; }
+            #slide-8 p { font-size: 1.4rem; }
+            h2 { font-size: 2rem; margin-bottom: 1.5rem;}
+            h3 { font-size: 1.6rem; margin-top: 1.5rem;}
+            p, ul, ul li { font-size: 1.1rem; }
+            ul li { padding-left: 1.5rem; }
+            ul li::before { font-size: 1.3rem; }
+
+            #pagination {
+                bottom: 15px;
+                right: 15px;
+                font-size: 1rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #slide-1 h1 { font-size: 2.5rem; }
+            #slide-1 h2 { font-size: 1.2rem; }
+            #slide-1 p { font-size: 1rem; }
+            #slide-8 h2 { font-size: 2.5rem; }
+            #slide-8 p { font-size: 1.2rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.4rem; }
+            p, ul, ul li { font-size: 1rem; }
+            .slide { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="presentation-container">
+        <!-- Slide 1: Cover Page -->
+        <div class="slide" id="slide-1">
+            <h1>AI在教育上的應用</h1>
+            <h2>賦能教師，開創智能教學新紀元</h2>
+            <p>主講人：亮亮老師</p>
+            <p>組織：亮亮文創公司</p>
+            <!-- 圖片佔位符描述：可以放置一個AI機器人與老師互動的抽象圖像，或代表智能教學的圖示。 -->
+        </div>
+
+        <!-- Slide 2: AI與教育的交會 -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <h2>AI與教育的交會：新挑戰與新機遇</h2>
+                <p>人工智慧的發展日新月異，它不僅改變了我們的生活，也正在深刻地影響著教育領域。對於老師們而言，這是一個充滿挑戰但也蘊含無限機遇的時代。</p>
+                <ul>
+                    <li>AI不再是遙遠的未來，而是教學現場的即時工具。</li>
+                    <li>它能輔助老師提升教學效率，優化學習體驗。</li>
+                    <li>本簡報旨在引導老師們探索AI，將其轉化為教學的得力助手。</li>
+                </ul>
+            </div>
+            <div class="slide-image-placeholder">
+                <!-- 圖片佔位符描述：一張描繪人工智慧與教育結合的抽象圖，例如神經網絡連接書本、學生和老師的圖像。 -->
+                AI與教育的交會示意圖
+            </div>
+        </div>
+
+        <!-- Slide 3: 常用AI平台介紹 -->
+        <div class="slide" id="slide-3">
+            <div class="slide-image-placeholder">
+                <!-- 圖片佔位符描述：多個常見AI平台（如ChatGPT、Google Gemini、Canva AI）的Logo或代表性圖標組合。 -->
+                常見AI平台概覽
+            </div>
+            <div class="slide-content">
+                <h2>常用AI平台介紹：您的智能教學夥伴</h2>
+                <p>市面上已有許多成熟的AI工具，可以幫助老師們簡化工作流程、提升教學品質。了解這些工具是運用AI的第一步。</p>
+                <h3>1. 大型語言模型 (LLMs)</h3>
+                <ul>
+                    <li>**ChatGPT, Google Gemini, Microsoft CoPilot:** 用於文本生成、內容摘要、創意寫作、問答輔助等。</li>
+                </ul>
+                <h3>2. 內容生成與創意工具</h3>
+                <ul>
+                    <li>**Canva AI, Midjourney (圖像), Synthesia (影片):** 快速生成視覺素材、教材、甚至虛擬教學影片。</li>
+                </ul>
+                <h3>3. 教育專用AI工具</h3>
+                <ul>
+                    <li>**Quizlet (學習輔助), Knewton (個性化學習):** 提供智能練習、自適應學習路徑與數據分析。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: AI在備課與教學上的應用 -->
+        <div class="slide" id="slide-4">
+            <div class="slide-content">
+                <h2>AI在備課與教學上的應用：提升效率與品質</h2>
+                <p>AI能大幅減輕老師的重複性工作負擔，讓老師有更多時間專注於教學核心。</p>
+                <h3>1. 備課階段</h3>
+                <ul>
+                    <li>**教案與課程大綱生成：** 快速產出符合特定主題、學齡、學習目標的教案草稿。</li>
+                    <li>**多元評量設計：** 根據課程內容自動生成不同題型（選擇、簡答、情境題），並提供參考答案。</li>
+                    <li>**資料搜尋與歸納：** 迅速整理大量學術資料、新聞事件，轉化為教學素材。</li>
+                </ul>
+                <h3>2. 教學階段</h3>
+                <ul>
+                    <li>**課堂互動設計：** 構思引導式提問、討論題目，激發學生思考。</li>
+                    <li>**輔助學生解惑：** 作為初步解答工具，對常見問題提供即時、標準化回答。</li>
+                    <li>**製作視覺化教材：** 將複雜概念轉化為易懂的圖表、簡報內容。</li>
+                </ul>
+            </div>
+            <div class="slide-image-placeholder">
+                <!-- 圖片佔位符描述：老師在筆記本電腦前，屏幕上顯示著AI生成的教案或教材，旁邊有智慧燈泡的圖示。 -->
+                AI輔助備課與教學
+            </div>
+        </div>
+
+        <!-- Slide 5: AI在個性化學習與評估上的應用 -->
+        <div class="slide" id="slide-5">
+            <div class="slide-image-placeholder">
+                <!-- 圖片佔位符描述：一個學生在平板電腦前學習，屏幕上顯示著AI根據其學習進度調整的內容，周圍是數據分析的圖示。 -->
+                個性化學習與智能評估
+            </div>
+            <div class="slide-content">
+                <h2>AI在個性化學習與評估上的應用</h2>
+                <p>AI能夠理解每個學生的獨特需求，實現真正意義上的因材施教。</p>
+                <h3>1. 個性化學習路徑</h3>
+                <ul>
+                    <li>**自適應學習平台：** 根據學生目前的學習進度、理解能力，推薦最適合的學習資源和練習。</li>
+                    <li>**智能輔導系統：** 提供即時反饋和解釋，引導學生自主學習，彌補知識盲區。</li>
+                    <li>**興趣驅動學習：** 分析學生興趣，推薦相關的課外閱讀、專題研究方向。</li>
+                </ul>
+                <h3>2. 精準學習評估</h3>
+                <ul>
+                    <li>**學習數據分析：** 收集學生在線學習數據，分析學習行為、答題模式，找出共性與個體差異。</li>
+                    <li>**自動化批改與回饋：** 對於客觀題甚至部分主觀題，AI可提供快速、一致的批改與詳細的回饋。</li>
+                    <li>**進度預警：** 根據學習數據預測學生的學習風險，提醒老師及時介入輔導。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: AI如何擴展教師工作範圍 (一): 創新教學策略 -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <h2>AI如何擴展教師工作範圍 (一): 創新教學策略</h2>
+                <p>AI將老師從繁瑣的日常工作中解放出來，使其能夠投入更多精力於更具創造性和影響力的工作。</p>
+                <h3>1. 從知識傳遞者到學習引導者</h3>
+                <ul>
+                    <li>AI能承擔基礎知識的傳遞，老師則轉變為學習的設計者、協調者和激勵者。</li>
+                    <li>更多地引導學生進行探究、批判性思考和問題解決。</li>
+                </ul>
+                <h3>2. 設計跨學科與專題式學習</h3>
+                <ul>
+                    <li>利用AI快速整合跨學科知識，設計更具深度和廣度的專題項目。</li>
+                    <li>鼓勵學生運用AI工具進行研究與創作。</li>
+                </ul>
+                <h3>3. 提升教學內容的豐富性與互動性</h3>
+                <ul>
+                    <li>運用AI生成虛擬實驗、模擬情境，讓抽象概念具象化。</li>
+                    <li>開發個性化學習遊戲或互動模塊，提升學生參與度。</li>
+                </ul>
+            </div>
+            <div class="slide-image-placeholder">
+                <!-- 圖片佔位符描述：老師與學生圍繞一個全息投影或智能白板進行互動，展現創新教學場景。 -->
+                創新教學與協作
+            </div>
+        </div>
+
+        <!-- Slide 7: AI如何擴展教師工作範圍 (二): 提升行政與研究效率 -->
+        <div class="slide" id="slide-7">
+            <div class="slide-image-placeholder">
+                <!-- 圖片佔位符描述：一個老師坐在辦公桌前，電腦屏幕上顯示著數據分析圖表、自動生成的報告或郵件，象徵行政效率的提升。 -->
+                智能行政與學術輔助
+            </div>
+            <div class="slide-content">
+                <h2>AI如何擴展教師工作範圍 (二): 提升行政與研究效率</h2>
+                <p>除了教學，行政管理和學術研究也是教師工作的重要部分，AI同樣能提供強大支援。</p>
+                <h3>1. 提升行政效率</h3>
+                <ul>
+                    <li>**自動生成草稿：** 快速撰寫通知、信件、活動方案等行政文件。</li>
+                    <li>**會議記錄整理：** 自動將語音轉錄為文字，並進行重點摘要與整理。</li>
+                    <li>**數據分析報告：** 簡化學生出勤、成績、行為等數據的分析過程，生成視覺化報告。</li>
+                </ul>
+                <h3>2. 輔助學術研究</h3>
+                <ul>
+                    <li>**文獻回顧輔助：** 快速篩選、閱讀、摘要大量學術文獻，構建研究背景。</li>
+                    <li>**研究設計與數據分析：** 協助提出研究問題、設計問卷，並對實驗數據進行初步分析。</li>
+                    <li>**學術寫作輔助：** 提供語法修正、潤飾詞句、檢查抄襲等功能，提升論文品質。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Thank You / Contact -->
+        <div class="slide" id="slide-8">
+            <h2>感謝您的參與！</h2>
+            <p>AI是教育的助手，而非替代者。</p>
+            <p>讓我們一同探索AI潛力，為學生創造更豐富的學習體驗！</p>
+            <p style="margin-top: 3rem;">主講人：亮亮老師</p>
+            <p>組織：亮亮文創公司</p>
+            <p>E-mail: teacher.liang@liangliang.com (示例)</p>
+            <p>網站: www.liangliang.com (示例)</p>
+            <!-- 圖片佔位符描述：可以是一個簡潔的感謝字樣，或一個微笑的AI機器人圖標，表達友好和未來感。 -->
+        </div>
+
+        <div id="pagination">
+            <span id="current-page">1</span> / <span id="total-pages">8</span>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+
+        const currentPageSpan = document.getElementById('current-page');
+        const totalPagesSpan = document.getElementById('total-pages');
+        totalPagesSpan.textContent = totalSlides;
+
+        function showSlide(index) {
+            // Ensure index is within bounds
+            if (index < 0 || index >= totalSlides) {
+                return;
+            }
+
+            // Remove 'active' class from current slide
+            if (slides[currentSlideIndex]) {
+                slides[currentSlideIndex].classList.remove('active');
+            }
+
+            // Add 'active' class to new slide
+            slides[index].classList.add('active');
+            currentSlideIndex = index;
+
+            // Update pagination
+            currentPageSpan.textContent = currentSlideIndex + 1;
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < totalSlides - 1) {
+                showSlide(currentSlideIndex + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                showSlide(currentSlideIndex - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initial load: show the first slide
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

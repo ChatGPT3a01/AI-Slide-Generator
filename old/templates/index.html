@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 簡報生成系統</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 AI 簡報自動生成系統</h1>
+
+    <form id="presentationForm">
+      <!-- API 設定 -->
+      <div class="section">
+        <h2>🔑 API 設定</h2>
+        
+        <label>選擇 AI 服務：</label>
+        <select id="aiService" required>
+          <option value="gemini">Google Gemini</option>
+          <option value="openai">OpenAI GPT</option>
+        </select>
+
+        <label id="apiKeyLabel">Google AI API Key：</label>
+        <input type="text" id="apiKey" placeholder="請輸入 API Key" required>
+
+        <label>模型選擇：</label>
+        <select id="model">
+          <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+          <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro</option>
+        </select>
+
+        <label>生成方式：</label>
+        <select id="generationMode" required>
+          <option value="ai-full">完全由 AI 生成（創意自由，品質不穩定）</option>
+          <option value="template">使用模板（穩定美觀，內容由 AI 填充）</option>
+          <option value="both">兩種都生成（可比較選擇）</option>
+        </select>
+      </div>
+
+      <!-- 簡報基本資訊 -->
+      <div class="section">
+        <h2>📋 簡報基本資訊</h2>
+        
+        <label>簡報主題：</label>
+        <input type="text" id="topic" placeholder="例如：AI 在教育的應用" required>
+
+        <label>簡報對象：</label>
+        <input type="text" id="audience" placeholder="例如：企業主管、學生、一般大眾" required>
+
+        <label>簡報關鍵字：</label>
+        <input type="text" id="keywords" placeholder="用逗號分隔，例如：AI、教育、創新" required>
+
+        <label>簡報目的：</label>
+        <textarea id="purpose" placeholder="請描述這份簡報的主要目的" rows="3" required></textarea>
+      </div>
+
+      <!-- 簡報設定 -->
+      <div class="section">
+        <h2>⚙️ 簡報設定</h2>
+
+        <label>頁數：</label>
+        <input type="number" id="pageCount" value="8" min="5" max="20" required>
+
+        <label>簡報類型：</label>
+        <select id="presentationType" required>
+          <option value="product">產品介紹</option>
+          <option value="education">教學簡報</option>
+          <option value="report">報告</option>
+          <option value="proposal">提案</option>
+          <option value="other">其他</option>
+        </select>
+
+        <label>簡報風格：</label>
+        <select id="style" required>
+          <option value="professional">專業</option>
+          <option value="creative">創意</option>
+          <option value="academic">學術</option>
+          <option value="business">商業</option>
+          <option value="minimal">極簡</option>
+        </select>
+
+        <label>色彩主題：</label>
+        <select id="colorTheme" required>
+          <option value="blue">藍色系</option>
+          <option value="warm">暖色系</option>
+          <option value="corporate">企業色</option>
+          <option value="dark">深色系</option>
+          <option value="bright">亮色系</option>
+        </select>
+
+        <label>
+          <input type="checkbox" id="includeImages" checked>
+          使用 AI 生成圖片描述
+        </label>
+      </div>
+
+      <!-- 額外內容 -->
+      <div class="section">
+        <h2>📝 額外內容</h2>
+
+        <label>作者資訊：</label>
+        <input type="text" id="author" placeholder="例如：張三 / ABC 公司">
+
+        <label>公司/組織名稱：</label>
+        <input type="text" id="organization" placeholder="選填">
+
+        <label>其他備註：</label>
+        <textarea id="notes" placeholder="任何想加入簡報的額外資訊" rows="3"></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">🚀 生成簡報</button>
+    </form>
+
+    <!-- 結果顯示區 -->
+    <div id="result" style="display:none;">
+      <h2>✅ 簡報生成成功！</h2>
+      <div id="resultContent"></div>
+    </div>
+
+    <div id="loading" style="display:none;">
+      <div class="spinner"></div>
+      <p>⏳ AI 正在生成簡報中，請稍候...</p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('presentationForm');
+    const aiService = document.getElementById('aiService');
+    const apiKeyLabel = document.getElementById('apiKeyLabel');
+    const modelSelect = document.getElementById('model');
+
+    // 切換 AI 服務
+    aiService.addEventListener('change', () => {
+      if (aiService.value === 'gemini') {
+        apiKeyLabel.textContent = 'Google AI API Key：';
+        modelSelect.innerHTML = `
+          <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+          <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro</option>
+        `;
+      } else {
+        apiKeyLabel.textContent = 'OpenAI API Key：';
+        modelSelect.innerHTML = `
+          <option value="gpt-5.6-terra">GPT-5.6 Terra</option>
+          <option value="gpt-5.6-terra">GPT-5.6 Terra Turbo</option>
+          <option value="gpt-5.6-luna">GPT-5.6 Luna Turbo</option>
+        `;
+      }
+    });
+
+    // 表單提交
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+
+      const formData = {
+        aiService: aiService.value,
+        apiKey: document.getElementById('apiKey').value,
+        model: document.getElementById('model').value,
+        generationMode: document.getElementById('generationMode').value,
+        topic: document.getElementById('topic').value,
+        audience: document.getElementById('audience').value,
+        keywords: document.getElementById('keywords').value,
+        purpose: document.getElementById('purpose').value,
+        pageCount: document.getElementById('pageCount').value,
+        presentationType: document.getElementById('presentationType').value,
+        style: document.getElementById('style').value,
+        colorTheme: document.getElementById('colorTheme').value,
+        includeImages: document.getElementById('includeImages').checked,
+        author: document.getElementById('author').value,
+        organization: document.getElementById('organization').value,
+        notes: document.getElementById('notes').value
+      };
+
+      try {
+        const response = await fetch('/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        document.getElementById('loading').style.display = 'none';
+
+        if (result.status === 'success') {
+          document.getElementById('result').style.display = 'block';
+          
+          let resultHTML = `
+            <p><strong>主題：</strong>${formData.topic}</p>
+            <p><strong>頁數：</strong>${formData.pageCount} 頁</p>
+          `;
+
+          if (formData.generationMode === 'both') {
+            resultHTML += `
+              <p><strong>AI 完整版：</strong>${result.ai_filename}</p>
+              <p><strong>模板版：</strong>${result.template_filename}</p>
+              <div class="action-buttons">
+                <button onclick="window.open('${result.ai_url}', '_blank')" class="btn-primary">👁️ 預覽 AI 版</button>
+                <button onclick="window.open('${result.template_url}', '_blank')" class="btn-primary">👁️ 預覽模板版</button>
+              </div>
+              <div class="action-buttons">
+                <button onclick="downloadFile('${result.ai_url}', '${result.ai_filename}')" class="btn-success">💾 下載 AI 版</button>
+                <button onclick="downloadFile('${result.template_url}', '${result.template_filename}')" class="btn-success">💾 下載模板版</button>
+              </div>
+            `;
+          } else {
+            resultHTML += `
+              <p><strong>檔案：</strong>${result.filename}</p>
+              <div class="action-buttons">
+                <button onclick="window.open('${result.local_url}', '_blank')" class="btn-primary">👁️ 預覽簡報</button>
+                <button onclick="downloadFile('${result.local_url}', '${result.filename}')" class="btn-success">💾 下載簡報</button>
+              </div>
+            `;
+          }
+
+          document.getElementById('resultContent').innerHTML = resultHTML;
+        } else {
+          alert('生成失敗：' + result.message);
+        }
+      } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        alert('發生錯誤：' + error.message);
+      }
+    });
+
+    function downloadFile(url, filename) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+    }
+  </script>
+</body>
+</html>

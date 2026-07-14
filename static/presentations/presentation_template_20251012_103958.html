@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>臺灣現行AI融入教育的現場與未來趨勢</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+      overflow: hidden;
+      background: #111827;
+      color: #f3f4f6;
+    }
+    
+    .slide-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    }
+    
+    .slide.active {
+      opacity: 1;
+      z-index: 1;
+    }
+    
+    .slide h1 {
+      font-size: 4em;
+      color: white;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .slide h2 {
+      font-size: 2.5em;
+      color: white;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    
+    .slide p {
+      font-size: 1.5em;
+      color: white;
+      max-width: 800px;
+      line-height: 1.8;
+      text-align: center;
+      margin: 10px 0;
+    }
+    
+    .slide ul {
+      font-size: 1.5em;
+      color: white;
+      max-width: 800px;
+      line-height: 2;
+      text-align: left;
+    }
+    
+    .slide ul li {
+      margin: 20px 0;
+      list-style: none;
+      position: relative;
+      padding-left: 40px;
+    }
+    
+    .slide ul li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #6b7280;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    
+    .indicator {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 100;
+    }
+    
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .dot.active {
+      background: white;
+      transform: scale(1.3);
+    }
+    
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: white;
+      transition: width 0.3s;
+      z-index: 100;
+    }
+    
+    .nav-hint {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      opacity: 0.7;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  
+  <div class="slide-container">
+    <!-- 第1頁：封面 -->
+    <div class="slide active">
+      <h1>臺灣現行AI融入教育的現場與未來趨勢</h1>
+      <p style="font-size: 1.8em; margin-top: 20px;">我要向來參加會議的老師簡報目前臺灣對於AI融入教學的課堂現狀以及可能的未來發展</p>
+      <p style="margin-top: 60px; font-size: 1.2em;">主講人：謝春發老師</p>
+      <p style="font-size: 1.2em;">謝P昌歌團隊</p>
+    </div>
+    
+    <!-- 第2頁：目錄 -->
+    <div class="slide">
+      <h2>內容大綱</h2>
+      <ul>
+        <li>老師</li><li>臺灣教育</li><li>AI</li><li>AI教育</li><li>AI發展</li>
+      </ul>
+    </div>
+    
+    
+    <div class="slide">
+      <h2>AI 新世代，教學進化論：臺灣教育的現場與未來</h2>
+      <p>歡迎各位老師的蒞臨。本簡報將與您一同探討人工智慧(AI)如何改變臺灣的教育現場，並共同擘劃教學的未來藍圖。</p>
+    </div>
+    <div class="slide">
+      <h2>簡報大綱：我們今天將談什麼？</h2>
+      <p>我們將從AI的基本概念談起，接著分析臺灣AI教育的政策現況與課堂應用案例。最後，我們將一起展望未來的發展趨勢，並思考身為教師的我們可以如何應對。</p>
+    </div>
+    <div class="slide">
+      <h2>AI是什麼？為何與教育息息相關？</h2>
+      <p>人工智慧是讓機器像人類一樣學習與解決問題的技術，它已是學生未來不可或缺的關鍵素養。對老師而言，AI更是提升教學效率、實現因材施教的得力助手。</p>
+    </div>
+    <div class="slide">
+      <h2>臺灣AI教育現況：政策與資源</h2>
+      <p>政府已將AI納入中小學課綱，並推動「中小學人工智慧教育計畫」等政策。現場老師可以運用「因材網」等國家級平台，並參與相關的師資培育研習，來獲取豐富的教學資源。</p>
+    </div>
+    <div class="slide">
+      <h2>課堂進行式：AI融入教學的真實案例</h2>
+      <p>目前已有許多老師利用AI進行差異化教學，或作為備課、設計教材的輔助工具。例如，使用生成式AI快速產出寫作鷹架，或利用學習平台追蹤學生的個別學習進度。</p>
+    </div>
+    <div class="slide">
+      <h2>教師角色的轉變：從知識傳授者到學習引導者</h2>
+      <p>當AI能分擔重複性的行政與批改工作後，老師的角色將更聚焦於啟發學生的思辨能力與創造力。我們將從「講台上的聖人」轉變為「學生身旁的嚮導」，引導他們善用工具、深度學習。</p>
+    </div>
+    <div class="slide">
+      <h2>挑戰與省思：我們共同面對的課題</h2>
+      <p>我們必須正視數位落差、AI倫理（如學術誠信與偏見）以及資訊判讀等挑戰。培養學生正確使用AI的數位素養，是當前教育最重要的核心任務之一。</p>
+    </div>
+    
+    <!-- 最後一頁：結尾 -->
+    <div class="slide">
+      <h1>Thank You</h1>
+      <p style="margin-top: 40px;">謝春發老師</p>
+      <p>謝P昌歌團隊</p>
+    </div>
+  </div>
+  
+  <div class="indicator" id="indicator"></div>
+  <div class="nav-hint">← → 鍵盤切換 | 點擊左右切換</div>
+  
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    
+    function showSlide(n) {
+      slides.forEach(s => s.classList.remove('active'));
+      currentSlide = (n + totalSlides) % totalSlides;
+      slides[currentSlide].classList.add('active');
+      updateIndicator();
+      updateProgress();
+    }
+    
+    function nextSlide() {
+      showSlide(currentSlide + 1);
+    }
+    
+    function prevSlide() {
+      showSlide(currentSlide - 1);
+    }
+    
+    function updateIndicator() {
+      const indicator = document.getElementById('indicator');
+      indicator.innerHTML = '';
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+        dot.onclick = () => showSlide(i);
+        indicator.appendChild(dot);
+      }
+    }
+    
+    function updateProgress() {
+      const progress = document.getElementById('progress');
+      progress.style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+    }
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'ArrowRight') nextSlide();
+    });
+    
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('dot')) return;
+      if (e.clientX < window.innerWidth / 2) prevSlide();
+      else nextSlide();
+    });
+    
+    showSlide(0);
+  </script>
+</body>
+</html>

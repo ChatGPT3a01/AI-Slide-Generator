@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 簡報生成系統 - 完整教學文件</title>
+    <meta name="description" content="AI 簡報生成系統的使用教學與 HTML/CSS/JS 技術說明">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-tech {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        .tab-btn.active::after {
+            width: 100%;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .7; }
+        }
+
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.75rem;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .section-box {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-left: 5px solid #667eea;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-box {
+            background: #dbeafe;
+            border-left: 5px solid #3b82f6;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .warning-box {
+            background: #fef3c7;
+            border-left: 5px solid #f59e0b;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .success-box {
+            background: #d1fae5;
+            border-left: 5px solid #10b981;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 scroll-smooth">
+
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <a href="#" class="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+                    <i class="fas fa-graduation-cap text-4xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">AI 簡報生成系統</h1>
+                        <p class="text-sm opacity-90">完整教學文件與技術說明</p>
+                    </div>
+                </a>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#intro" class="nav-link hover:text-yellow-300">專案介紹</a>
+                    <a href="#tutorial" class="nav-link hover:text-yellow-300">教學內容</a>
+                    <a href="#community" class="nav-link hover:text-yellow-300">社群連結</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <i class="fas fa-rocket text-6xl pulse"></i>
+                </div>
+                <h1 class="text-5xl md:text-6xl font-black mb-6">
+                    Google Sheet AI 自動化打造網頁專案
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90">
+                    跟著阿亮老師一起學習 Google GAS、地端建置自動化、雲端生成網頁 三大核心技術
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 mb-12">
+                    <span class="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-lg">
+                        <i class="fas fa-check-circle"></i> Flask 後端
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-lg">
+                        <i class="fas fa-check-circle"></i> Google Apps Script
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-lg">
+                        <i class="fas fa-check-circle"></i> AI 整合
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-lg">
+                        <i class="fas fa-check-circle"></i> 響應式設計
+                    </span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#tutorial" class="bg-white text-purple-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 hover:text-purple-800 transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-play-circle"></i> 開始學習
+                    </a>
+                    <a href="http://127.0.0.1:5000" target="_blank" class="bg-green-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-green-600 transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-external-link-alt"></i> 開啟系統
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section id="intro" class="py-20 bg-white">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
+                    <i class="fas fa-lightbulb text-yellow-500"></i> 專案簡介
+                </h2>
+                <p class="text-xl text-gray-600">了解這個專案能為你做什麼</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card card-hover">
+                    <div class="text-5xl mb-4">
+                        <i class="fas fa-brain text-purple-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-800">AI 驅動</h3>
+                    <p class="text-gray-600">支援 Google Gemini 和 OpenAI GPT，自動生成專業簡報內容</p>
+                </div>
+
+                <div class="feature-card card-hover">
+                    <div class="text-5xl mb-4">
+                        <i class="fas fa-palette text-blue-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-800">多種模板</h3>
+                    <p class="text-gray-600">提供現代雙欄、教學步驟、經典全屏三種專業模板風格</p>
+                </div>
+
+                <div class="feature-card card-hover">
+                    <div class="text-5xl mb-4">
+                        <i class="fas fa-cloud text-green-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-800">雲端整合</h3>
+                    <p class="text-gray-600">使用 Google Apps Script 雲端處理，無需複雜伺服器設定</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tutorial Section with Tabs -->
+    <section id="tutorial" class="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
+                    <i class="fas fa-book-open text-indigo-600"></i> 教學內容
+                </h2>
+                <p class="text-xl text-gray-600">選擇你想學習的內容</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex justify-center mb-8 bg-white rounded-full shadow-lg p-2 max-w-2xl mx-auto">
+                <button onclick="switchTab('usage')" class="tab-btn active flex-1 px-6 py-3 rounded-full font-bold text-lg transition-all" id="tab-usage">
+                    <i class="fas fa-user-graduate"></i> 使用教學
+                </button>
+                <button onclick="switchTab('tech')" class="tab-btn flex-1 px-6 py-3 rounded-full font-bold text-lg transition-all" id="tab-tech">
+                    <i class="fas fa-code"></i> 技術說明
+                </button>
+            </div>
+
+            <!-- Tab Content: Usage Tutorial -->
+            <div id="content-usage" class="tab-content active">
+                <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+
+                    <!-- 系統架構 -->
+                    <div class="mb-16">
+                        <h3 class="text-3xl font-bold text-gray-800 mb-6 flex items-center border-b-4 border-indigo-600 pb-3">
+                            <i class="fas fa-sitemap text-indigo-600 mr-3"></i> 系統架構說明
+                        </h3>
+
+                        <div class="info-box mb-6">
+                            <h4 class="font-bold text-lg mb-2">🎯 這個專案是什麼?</h4>
+                            <p>這是一個<strong>本機端運行</strong>的 AI 簡報自動生成系統，透過 Python Flask 提供網頁界面，將需求傳送到 Google Apps Script 處理，再呼叫 AI API 生成專業簡報。</p>
+                        </div>
+
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4">系統運作流程</h4>
+                        <div class="grid md:grid-cols-2 gap-4 mb-8">
+                            <div class="section-box">
+                                <strong class="text-purple-600">步驟 1:</strong> 在本機啟動 Flask 伺服器 (localhost:5000)
+                            </div>
+                            <div class="section-box">
+                                <strong class="text-purple-600">步驟 2:</strong> 在網頁界面填寫簡報需求
+                            </div>
+                            <div class="section-box">
+                                <strong class="text-purple-600">步驟 3:</strong> 資料傳送到 Google Apps Script
+                            </div>
+                            <div class="section-box">
+                                <strong class="text-purple-600">步驟 4:</strong> GAS 呼叫 AI API 生成內容
+                            </div>
+                            <div class="section-box">
+                                <strong class="text-purple-600">步驟 5:</strong> 選擇使用 AI 生成或套用模板
+                            </div>
+                            <div class="section-box">
+                                <strong class="text-purple-600">步驟 6:</strong> 下載 HTML 簡報檔案
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3 text-gray-800">🖥️ Flask 本機端</h5>
+                                <p class="mb-2"><strong>Port:</strong> 5000</p>
+                                <p class="mb-2"><strong>功能:</strong></p>
+                                <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                                    <li>提供網頁界面</li>
+                                    <li>接收使用者輸入</li>
+                                    <li>與 GAS 通訊</li>
+                                    <li>儲存生成的簡報</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3 text-gray-800">☁️ Google Apps Script</h5>
+                                <p class="mb-2"><strong>部署:</strong> Web 應用程式</p>
+                                <p class="mb-2"><strong>功能:</strong></p>
+                                <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                                    <li>接收 Flask 請求</li>
+                                    <li>呼叫 AI API</li>
+                                    <li>處理模板渲染</li>
+                                    <li>記錄到 Google Sheets</li>
+                                </ul>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3 text-gray-800">🤖 AI 生成</h5>
+                                <p class="mb-2"><strong>支援:</strong> Gemini / OpenAI</p>
+                                <p class="mb-2"><strong>兩種模式:</strong></p>
+                                <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                                    <li><strong>完全 AI 生成:</strong> 創意自由</li>
+                                    <li><strong>模板生成:</strong> 專業美觀</li>
+                                    <li><strong>同時生成:</strong> 比較選擇</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 部署設定 -->
+                    <div class="mb-16">
+                        <h3 class="text-3xl font-bold text-gray-800 mb-6 flex items-center border-b-4 border-green-600 pb-3">
+                            <i class="fas fa-cog text-green-600 mr-3"></i> 完整部署設定
+                        </h3>
+
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4">📝 第一步：部署 Google Apps Script</h4>
+
+                        <div class="section-box mb-4">
+                            <strong class="text-lg text-gray-800 block mb-2">1.1 建立 GAS 專案</strong>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-4">
+                                <li>前往 <a href="https://script.google.com/" target="_blank" class="text-blue-600 hover:underline">Google Apps Script</a></li>
+                                <li>點擊「新專案」</li>
+                                <li>命名為「AI簡報生成系統」</li>
+                            </ol>
+                        </div>
+
+                        <div class="section-box mb-4">
+                            <strong class="text-lg text-gray-800 block mb-2">1.2 貼上程式碼</strong>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-4">
+                                <li>刪除預設的程式碼</li>
+                                <li>開啟專案中的 <code class="bg-gray-200 px-2 py-1 rounded">GAS_code.js</code></li>
+                                <li>複製完整內容並貼到 Apps Script 編輯器</li>
+                                <li>點擊儲存 (💾)</li>
+                            </ol>
+                        </div>
+
+                        <div class="section-box mb-4">
+                            <strong class="text-lg text-gray-800 block mb-2">1.3 部署為 Web 應用程式</strong>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-4">
+                                <li>點擊右上角「部署」→「新增部署作業」</li>
+                                <li>選擇類型：「網頁應用程式」</li>
+                                <li>設定執行身分：<strong>我</strong></li>
+                                <li>具有存取權的使用者：<strong>任何人</strong></li>
+                                <li>點擊「部署」</li>
+                                <li><strong class="text-red-600">重要!</strong> 複製「網頁應用程式 URL」</li>
+                            </ol>
+                        </div>
+
+                        <div class="warning-box mb-6">
+                            <strong class="block mb-2">⚠️ 授權提醒</strong>
+                            <p>首次部署時 Google 會要求授權，點擊「進階」→「前往 AI簡報生成系統(不安全)」→「允許」。這是正常流程！</p>
+                        </div>
+
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4 mt-8">🐍 第二步：設定本機 Flask</h4>
+
+                        <div class="section-box mb-4">
+                            <strong class="text-lg text-gray-800 block mb-2">2.1 設定 GAS URL</strong>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-4">
+                                <li>開啟 <code class="bg-gray-200 px-2 py-1 rounded">app.py</code></li>
+                                <li>找到第 14 行：<code class="bg-gray-200 px-2 py-1 rounded">GAS_URL = "你的GAS網址"</code></li>
+                                <li>將其替換成你剛複製的 GAS URL</li>
+                                <li>儲存檔案</li>
+                            </ol>
+                        </div>
+
+                        <div class="section-box mb-4">
+                            <strong class="text-lg text-gray-800 block mb-2">2.2 安裝 Python 套件</strong>
+                            <p class="mb-2">在專案目錄執行：</p>
+                            <div class="code-block mb-2">pip install -r requirements.txt</div>
+                            <p>或個別安裝：</p>
+                            <div class="code-block">pip install Flask==3.0.0 requests==2.31.0</div>
+                        </div>
+
+                        <div class="section-box mb-4">
+                            <strong class="text-lg text-gray-800 block mb-2">2.3 啟動 Flask 伺服器</strong>
+                            <div class="code-block mb-2">python app.py</div>
+                            <p class="mb-2">看到這個訊息表示成功：</p>
+                            <div class="code-block">* Running on http://127.0.0.1:5000
+* Debug mode: on</div>
+                        </div>
+
+                        <div class="success-box">
+                            <strong class="block mb-2">✅ 完成設定</strong>
+                            <p>在瀏覽器開啟：<a href="http://127.0.0.1:5000" target="_blank" class="text-blue-600 hover:underline font-bold">http://127.0.0.1:5000</a></p>
+                            <p>應該會看到「AI 簡報自動生成系統」界面</p>
+                        </div>
+
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4 mt-8">🔑 第三步：取得 AI API 金鑰</h4>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3">選項 A: Google Gemini (推薦)</h5>
+                                <p class="mb-3 text-green-600 font-bold">✅ 免費額度充足</p>
+                                <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                                    <li>前往 <a href="https://aistudio.google.com/apikey" target="_blank" class="text-blue-600 hover:underline">Google AI Studio</a></li>
+                                    <li>點擊「Get API Key」</li>
+                                    <li>建立或選擇專案</li>
+                                    <li>點擊「Create API Key」</li>
+                                    <li>複製金鑰</li>
+                                </ol>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3">選項 B: OpenAI GPT</h5>
+                                <p class="mb-3 text-orange-600 font-bold">💰 需要付費</p>
+                                <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                                    <li>前往 <a href="https://platform.openai.com/api-keys" target="_blank" class="text-blue-600 hover:underline">OpenAI Platform</a></li>
+                                    <li>註冊並登入</li>
+                                    <li>點擊「Create new secret key」</li>
+                                    <li>複製金鑰</li>
+                                    <li>需要先充值帳戶</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 使用教學 -->
+                    <div class="mb-16">
+                        <h3 class="text-3xl font-bold text-gray-800 mb-6 flex items-center border-b-4 border-blue-600 pb-3">
+                            <i class="fas fa-play-circle text-blue-600 mr-3"></i> 詳細使用教學
+                        </h3>
+
+                        <div class="section-box mb-6">
+                            <h4 class="text-xl font-bold mb-3">1️⃣ API 設定區塊</h4>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                                <li><strong>選擇 AI 服務：</strong>Gemini 或 OpenAI</li>
+                                <li><strong>貼上 API Key：</strong>在上一步取得的金鑰</li>
+                                <li><strong>選擇模型：</strong>Gemini 3.5 Flash (推薦)、GPT-5.6 Terra</li>
+                                <li><strong>生成方式：</strong>
+                                    <ul class="list-circle list-inside ml-6 mt-1">
+                                        <li>完全由 AI 生成 - 創意度高</li>
+                                        <li>使用模板 - 美觀穩定 ⭐</li>
+                                        <li>兩種都生成 - 可以比較選擇</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="section-box mb-6">
+                            <h4 class="text-xl font-bold mb-3">2️⃣ 簡報基本資訊</h4>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                                <li><strong>主題：</strong>簡報的核心主題（例：AI 在教育的應用）</li>
+                                <li><strong>對象：</strong>聽眾是誰（例：大學生、企業主管）</li>
+                                <li><strong>關鍵字：</strong>用逗號分隔（例：AI, 教育, 創新）</li>
+                                <li><strong>目的：</strong>要達成什麼（例：介紹產品、教學）</li>
+                            </ul>
+                        </div>
+
+                        <div class="section-box mb-6">
+                            <h4 class="text-xl font-bold mb-3">3️⃣ 簡報設定</h4>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                                <li><strong>頁數：</strong>5-20 頁（建議 8-12 頁）</li>
+                                <li><strong>類型：</strong>商務報告、產品介紹、教學培訓、學術研究、創意提案</li>
+                                <li><strong>風格：</strong>專業、創意、學術、輕鬆</li>
+                                <li><strong>色彩主題：</strong>藍色系、暖色系、企業色、活潑色</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-box">
+                            <strong class="block mb-2">💡 使用技巧</strong>
+                            <ul class="list-disc list-inside space-y-1 text-sm ml-4">
+                                <li><strong>首次使用：</strong>建議選「使用模板」，品質穩定</li>
+                                <li><strong>頁數建議：</strong>8-12 頁最適合</li>
+                                <li><strong>關鍵字：</strong>3-5 個最佳</li>
+                                <li><strong>生成時間：</strong>正常 10-30 秒</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 常見問題 -->
+                    <div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-6 flex items-center border-b-4 border-red-600 pb-3">
+                            <i class="fas fa-question-circle text-red-600 mr-3"></i> 常見問題解答
+                        </h3>
+
+                        <div class="space-y-4">
+                            <div class="feature-card">
+                                <h5 class="font-bold text-lg mb-2">Q1: GAS 部署後無法存取？</h5>
+                                <p class="text-gray-700"><strong>A:</strong> 確認部署時選擇「任何人」都可存取，並重新部署一次。檢查是否完成授權流程。</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="font-bold text-lg mb-2">Q2: API Key 無效？</h5>
+                                <p class="text-gray-700"><strong>A:</strong> 確認已在 AI Studio 啟用 API，並檢查金鑰是否完整複製（沒有多餘空格）。</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="font-bold text-lg mb-2">Q3: 簡報生成失敗？</h5>
+                                <p class="text-gray-700"><strong>A:</strong> 按 F12 開啟瀏覽器 Console 查看錯誤訊息。確認 app.py 中的 GAS_URL 設定正確。</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="font-bold text-lg mb-2">Q4: 生成速度太慢？</h5>
+                                <p class="text-gray-700"><strong>A:</strong> 減少簡報頁數（建議 8-12 頁），使用 Gemini 3.5 Flash，選擇「使用模板」模式。</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="font-bold text-lg mb-2">Q5: 如何停止 Flask 伺服器？</h5>
+                                <p class="text-gray-700"><strong>A:</strong> 在終端機按 <code class="bg-gray-200 px-2 py-1 rounded">Ctrl + C</code></p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab Content: Technical Explanation -->
+            <div id="content-tech" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+
+                    <h3 class="text-3xl font-bold text-gray-800 mb-6 flex items-center border-b-4 border-pink-600 pb-3">
+                        <i class="fas fa-code text-pink-600 mr-3"></i> 技術架構說明
+                    </h3>
+
+                    <div class="mb-12">
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4">📚 技術堆疊</h4>
+
+                        <div class="grid md:grid-cols-2 gap-6 mb-8">
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3 flex items-center">
+                                    <i class="fab fa-python text-blue-600 text-2xl mr-2"></i> Python Flask
+                                </h5>
+                                <p class="text-gray-700 mb-3">輕量級 Web 框架，用於建立本機端伺服器</p>
+                                <div class="code-block text-sm">
+from flask import Flask, render_template
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')</div>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3 flex items-center">
+                                    <i class="fab fa-google text-red-600 text-2xl mr-2"></i> Google Apps Script
+                                </h5>
+                                <p class="text-gray-700 mb-3">雲端 JavaScript 平台，處理 AI API 呼叫</p>
+                                <div class="code-block text-sm">
+function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  // 處理請求並呼叫 AI API
+  return ContentService.createTextOutput(
+    JSON.stringify(result)
+  );
+}</div>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3 flex items-center">
+                                    <i class="fab fa-html5 text-orange-600 text-2xl mr-2"></i> HTML5 + CSS3
+                                </h5>
+                                <p class="text-gray-700 mb-3">前端界面設計，響應式布局</p>
+                                <div class="code-block text-sm">
+&lt;div class="container"&gt;
+  &lt;h1&gt;AI 簡報生成系統&lt;/h1&gt;
+  &lt;form id="presentationForm"&gt;
+    &lt;!-- 表單內容 --&gt;
+  &lt;/form&gt;
+&lt;/div&gt;</div>
+                            </div>
+
+                            <div class="feature-card">
+                                <h5 class="text-xl font-bold mb-3 flex items-center">
+                                    <i class="fab fa-js text-yellow-600 text-2xl mr-2"></i> JavaScript
+                                </h5>
+                                <p class="text-gray-700 mb-3">前端邏輯處理與 AJAX 請求</p>
+                                <div class="code-block text-sm">
+fetch('/generate', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify(formData)
+})
+.then(res => res.json())
+.then(data => console.log(data));</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-12">
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4">🔄 資料流程圖</h4>
+
+                        <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-8 shadow-lg">
+                            <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center text-white text-3xl shadow-lg">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <p class="mt-3 font-bold text-gray-700">使用者輸入</p>
+                                </div>
+
+                                <div class="hidden md:block text-4xl text-gray-400">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                                <div class="md:hidden text-4xl text-gray-400">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+
+                                <div class="flex flex-col items-center">
+                                    <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center text-white text-3xl shadow-lg">
+                                        <i class="fab fa-python"></i>
+                                    </div>
+                                    <p class="mt-3 font-bold text-gray-700">Flask 伺服器</p>
+                                </div>
+
+                                <div class="hidden md:block text-4xl text-gray-400">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                                <div class="md:hidden text-4xl text-gray-400">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+
+                                <div class="flex flex-col items-center">
+                                    <div class="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center text-white text-3xl shadow-lg">
+                                        <i class="fab fa-google"></i>
+                                    </div>
+                                    <p class="mt-3 font-bold text-gray-700">GAS 處理</p>
+                                </div>
+
+                                <div class="hidden md:block text-4xl text-gray-400">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                                <div class="md:hidden text-4xl text-gray-400">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+
+                                <div class="flex flex-col items-center">
+                                    <div class="w-24 h-24 bg-purple-500 rounded-full flex items-center justify-center text-white text-3xl shadow-lg">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <p class="mt-3 font-bold text-gray-700">AI 生成</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-12">
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4">📁 專案檔案結構與下載</h4>
+
+                        <div class="bg-gray-900 text-gray-100 p-6 rounded-xl shadow-lg font-mono text-base leading-relaxed">
+                            <div class="text-yellow-400 font-bold mb-3">AI_生成簡報/</div>
+                            <div class="ml-4">
+                                <div class="mb-2">
+                                    <span class="text-blue-400">├──</span>
+                                    <a href="https://docs.google.com/document/d/1EkCpXL1lqA35N1Aat7snyGcu1wcMwyu96p3xj43tBVQ/edit?usp=sharing" target="_blank" class="text-green-300 hover:text-green-400 underline">app.py</a>
+                                    <span class="text-gray-500"># Flask 主程式</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="text-blue-400">├──</span>
+                                    <a href="https://docs.google.com/document/d/1llXIkKFn-yk1on-SPo1pq54T6ccKW1kFjtDCE7pbmiI/edit?usp=drive_link" target="_blank" class="text-green-300 hover:text-green-400 underline">requirements.txt</a>
+                                    <span class="text-gray-500"># Python 依賴套件</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="text-blue-400">├──</span>
+                                    <a href="https://docs.google.com/document/d/1qFVZ8R7qCVaDCTmoYoPab7EGt0jt1-IVMcWnezZe5_I/edit?usp=sharing" target="_blank" class="text-green-300 hover:text-green-400 underline">GAS_code.js</a>
+                                    <span class="text-gray-500"># Google Apps Script 程式碼</span>
+                                </div>
+                                <div class="mb-2"><span class="text-blue-400">├──</span> <span class="text-green-300">部署說明.md</span> <span class="text-gray-500"># 詳細部署文件</span></div>
+                                <div class="mb-2"><span class="text-blue-400">├──</span> <span class="text-green-300">index.html</span> <span class="text-gray-500"># 整合教學文件（本頁面）</span></div>
+                                <div class="mb-2"><span class="text-blue-400">├──</span> <span class="text-yellow-400 font-bold">templates/</span></div>
+                                <div class="ml-4 mb-2">
+                                    <span class="text-blue-400">│   └──</span>
+                                    <a href="https://docs.google.com/document/d/1w8x1Ht5_NFBPyvNBAZXC6Mphc0TA0q6tlymOQcKEV3Q/edit?usp=drive_link" target="_blank" class="text-green-300 hover:text-green-400 underline">index.html</a>
+                                    <span class="text-gray-500"># Flask 網頁界面</span>
+                                </div>
+                                <div class="mb-2"><span class="text-blue-400">├──</span> <span class="text-yellow-400 font-bold">static/</span></div>
+                                <div class="ml-4 mb-2">
+                                    <span class="text-blue-400">│   ├──</span>
+                                    <a href="https://docs.google.com/document/d/1HpHBCcngTYs-f0mbWZeN0W9hpVX7FF2g1H91RJBdk48/edit?usp=drive_link" target="_blank" class="text-green-300 hover:text-green-400 underline">style.css</a>
+                                    <span class="text-gray-500"># 網頁樣式</span>
+                                </div>
+                                <div class="ml-4 mb-2"><span class="text-blue-400">│   └──</span> <span class="text-yellow-400 font-bold">presentations/</span> <span class="text-gray-500"># 生成的簡報存放處</span></div>
+                                <div class="mb-2"><span class="text-blue-400">└──</span> <span class="text-yellow-400 font-bold">old/</span> <span class="text-gray-500"># 舊版本程式（備份）</span></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                            <h5 class="font-bold text-blue-800 mb-2 flex items-center">
+                                <i class="fas fa-download mr-2"></i> 下載所有程式碼
+                            </h5>
+                            <p class="text-blue-700 mb-3 text-sm">點擊上方檔案名稱即可在新分頁開啟 Google Docs，複製程式碼使用</p>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+                                <a href="https://docs.google.com/document/d/1qFVZ8R7qCVaDCTmoYoPab7EGt0jt1-IVMcWnezZe5_I/edit?usp=sharing" target="_blank" class="bg-white px-3 py-2 rounded border border-blue-300 hover:bg-blue-100 transition-colors flex items-center justify-center">
+                                    <i class="fab fa-google text-red-500 mr-2"></i> GAS_code.js
+                                </a>
+                                <a href="https://docs.google.com/document/d/1EkCpXL1lqA35N1Aat7snyGcu1wcMwyu96p3xj43tBVQ/edit?usp=sharing" target="_blank" class="bg-white px-3 py-2 rounded border border-blue-300 hover:bg-blue-100 transition-colors flex items-center justify-center">
+                                    <i class="fab fa-python text-blue-500 mr-2"></i> app.py
+                                </a>
+                                <a href="https://docs.google.com/document/d/1HpHBCcngTYs-f0mbWZeN0W9hpVX7FF2g1H91RJBdk48/edit?usp=drive_link" target="_blank" class="bg-white px-3 py-2 rounded border border-blue-300 hover:bg-blue-100 transition-colors flex items-center justify-center">
+                                    <i class="fab fa-css3 text-purple-500 mr-2"></i> style.css
+                                </a>
+                                <a href="https://docs.google.com/document/d/1w8x1Ht5_NFBPyvNBAZXC6Mphc0TA0q6tlymOQcKEV3Q/edit?usp=drive_link" target="_blank" class="bg-white px-3 py-2 rounded border border-blue-300 hover:bg-blue-100 transition-colors flex items-center justify-center">
+                                    <i class="fab fa-html5 text-orange-500 mr-2"></i> index.html
+                                </a>
+                                <a href="https://docs.google.com/document/d/1llXIkKFn-yk1on-SPo1pq54T6ccKW1kFjtDCE7pbmiI/edit?usp=drive_link" target="_blank" class="bg-white px-3 py-2 rounded border border-blue-300 hover:bg-blue-100 transition-colors flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-gray-500 mr-2"></i> requirements.txt
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-12">
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4">🎨 模板系統</h4>
+
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="feature-card card-hover">
+                                <div class="text-4xl mb-3 text-center">🎨</div>
+                                <h5 class="text-xl font-bold mb-3 text-center">現代雙欄式</h5>
+                                <p class="text-sm text-gray-700 mb-3">採用左右分欄設計，視覺豐富專業，適合商務報告</p>
+                                <div class="bg-blue-50 rounded p-3 text-xs">
+                                    <strong>特色：</strong>
+                                    <ul class="list-disc list-inside ml-2 mt-1">
+                                        <li>左右分欄</li>
+                                        <li>動畫效果</li>
+                                        <li>互動性強</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="feature-card card-hover">
+                                <div class="text-4xl mb-3 text-center">📚</div>
+                                <h5 class="text-xl font-bold mb-3 text-center">教學步驟式</h5>
+                                <p class="text-sm text-gray-700 mb-3">進度球導航，步驟清晰明確，適合培訓課程</p>
+                                <div class="bg-green-50 rounded p-3 text-xs">
+                                    <strong>特色：</strong>
+                                    <ul class="list-disc list-inside ml-2 mt-1">
+                                        <li>進度追蹤</li>
+                                        <li>步驟導向</li>
+                                        <li>易於跟隨</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="feature-card card-hover">
+                                <div class="text-4xl mb-3 text-center">📽️</div>
+                                <h5 class="text-xl font-bold mb-3 text-center">經典全屏式</h5>
+                                <p class="text-sm text-gray-700 mb-3">全屏顯示簡潔大方，適合學術報告</p>
+                                <div class="bg-purple-50 rounded p-3 text-xs">
+                                    <strong>特色：</strong>
+                                    <ul class="list-disc list-inside ml-2 mt-1">
+                                        <li>全屏展示</li>
+                                        <li>簡潔設計</li>
+                                        <li>易於閱讀</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-2xl font-bold text-gray-700 mb-4">🔧 進階自訂</h4>
+
+                        <div class="info-box mb-6">
+                            <strong class="block mb-2">如何修改模板？</strong>
+                            <p class="mb-2">編輯 <code class="bg-gray-200 px-2 py-1 rounded">GAS_code.js</code> 中的模板函數：</p>
+                            <ul class="list-disc list-inside ml-4 space-y-1 text-sm">
+                                <li><code class="bg-gray-200 px-2 py-1 rounded">generateWithTemplate()</code> - 現代雙欄式</li>
+                                <li><code class="bg-gray-200 px-2 py-1 rounded">generateTutorialTemplate()</code> - 教學步驟式</li>
+                                <li><code class="bg-gray-200 px-2 py-1 rounded">generateClassicTemplate()</code> - 經典全屏式</li>
+                            </ul>
+                            <p class="mt-2 text-sm text-red-600">⚠️ 修改後記得在 Apps Script 重新部署！</p>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong class="block mb-2">⚠️ 開發注意事項</strong>
+                            <ul class="list-disc list-inside ml-4 space-y-1 text-sm">
+                                <li>修改 Flask 路由後需重啟伺服器</li>
+                                <li>GAS 部署為新版本才會套用更新</li>
+                                <li>測試時建議使用較少頁數避免超時</li>
+                                <li>API Key 不要提交到版本控制系統</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section id="community" class="py-20 bg-white">
+        <div class="container mx-auto px-4 max-w-4xl text-center">
+            <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-6">
+                <i class="fas fa-users text-blue-600"></i> 加入社群
+            </h2>
+            <p class="text-xl text-gray-600 mb-12">跟著阿亮老師一起學習更多技術</p>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <a href="https://www.facebook.com/iddmail" target="_blank" class="feature-card card-hover text-center">
+                    <div class="text-5xl mb-3">
+                        <i class="fab fa-facebook text-blue-600"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800">Facebook</h4>
+                    <p class="text-gray-600 text-sm">追蹤最新教學</p>
+                </a>
+
+                <a href="https://www.youtube.com/@Liang-yt02" target="_blank" class="feature-card card-hover text-center">
+                    <div class="text-5xl mb-3">
+                        <i class="fab fa-youtube text-red-600"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800">YouTube</h4>
+                    <p class="text-gray-600 text-sm">觀看影片教學</p>
+                </a>
+
+                <a href="https://thisnote.space/" target="_blank" class="feature-card card-hover text-center">
+                    <div class="text-5xl mb-3">
+                        <i class="fas fa-brain text-purple-600"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800">AI 小幫手</h4>
+                    <p class="text-gray-600 text-sm">使用 AI 工具</p>
+                </a>
+            </div>
+
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-12 text-white shadow-2xl">
+                <h3 class="text-3xl font-bold mb-4">準備好開始了嗎？</h3>
+                <p class="text-xl mb-8 opacity-90">立即啟動系統，開始生成你的第一份 AI 簡報！</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="http://127.0.0.1:5000" target="_blank" class="bg-white text-purple-600 px-10 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 hover:text-purple-800 transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-rocket"></i> 開啟系統
+                    </a>
+                    <a href="https://g.co/gemini/share/7721652c04cd" target="_blank" class="bg-green-500 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-green-600 transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-sparkles"></i> Gemini 優化
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-6">
+                <i class="fas fa-graduation-cap text-5xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-2">Google Sheet AI 自動化打造網頁專案</h3>
+            <p class="text-lg opacity-90 mb-4">阿亮老師教學</p>
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="https://www.facebook.com/iddmail" target="_blank" class="text-white hover:text-yellow-300 transition-colors text-2xl">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="https://www.youtube.com/@Liang-yt02" target="_blank" class="text-white hover:text-yellow-300 transition-colors text-2xl">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://thisnote.space/" target="_blank" class="text-white hover:text-yellow-300 transition-colors text-2xl">
+                    <i class="fas fa-brain"></i>
+                </a>
+            </div>
+            <p class="text-sm opacity-75">© 2025 阿亮老師 | 使用前請確認已完成 GAS 部署並設定 API Key</p>
+        </div>
+    </footer>
+
+    <!-- Tab Switching Script -->
+    <script>
+        function switchTab(tab) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.remove('gradient-bg', 'text-white');
+                btn.classList.add('text-gray-600');
+            });
+
+            // Show selected tab content
+            document.getElementById('content-' + tab).classList.add('active');
+
+            // Add active class to selected tab button
+            const activeBtn = document.getElementById('tab-' + tab);
+            activeBtn.classList.add('active', 'gradient-bg', 'text-white');
+            activeBtn.classList.remove('text-gray-600');
+        }
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize first tab
+        document.addEventListener('DOMContentLoaded', function() {
+            switchTab('usage');
+        });
+    </script>
+
+</body>
+</html>
